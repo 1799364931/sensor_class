@@ -1,13 +1,11 @@
 package com.example.sensor.pojo.dto;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Component
-public class LogAlertMannagerDto {
+public class LogAlertManagerDto {
 
     private Timestamp setTime;
     private Double temperatureMax;
