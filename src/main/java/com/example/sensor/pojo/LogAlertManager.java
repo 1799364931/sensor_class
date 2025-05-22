@@ -7,11 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 
-/**
- *
- *  用于实现告警类，调整告警的范围
- */
-
 @Component //单例模式
 @Table(name = "tb_alert")
 @Entity

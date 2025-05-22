@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background: #333;
+    color: white;
+    padding: 15px;
+    height: 100vh;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-item span {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #444;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item span:hover {
+    background-color: #555;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.menu-item span:active {
+    background-color: #666;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.submenu {
+    list-style: none;
+    margin-left: 15px;
+    display: none; /* 默认隐藏 */
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}

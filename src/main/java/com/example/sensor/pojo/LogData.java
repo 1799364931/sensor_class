@@ -2,10 +2,6 @@ package com.example.sensor.pojo;
 
 
 import jakarta.persistence.*;
-import org.apache.juli.logging.Log;
-
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Table(name = "tb_log")
@@ -24,9 +20,7 @@ public class LogData {
     @Column(name = "alert")
     private boolean isAlert;
 
-    public LogData(){
-
-    }
+    public LogData(){}
 
     public LogData(Timestamp logTime, Double temperature,Double humidity, boolean isAlert){
         this.logTime = logTime;

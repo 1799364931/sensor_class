@@ -14,13 +14,13 @@ public class LogAlertManagerController {
 
     //获取当前的告警设置
     @GetMapping("")
-    public LogAlertManager getLogAlertMannager(){
+    public LogAlertManager getLogAlertManager(){
         return logAlertManager;
     }
 
     //设置当前的告警系统
     @PostMapping
-    public LogAlertManager setLogAlertMannager(@RequestBody LogAlertManagerDto logAlertManagerDto){
+    public LogAlertManager setLogAlertManager(@RequestBody LogAlertManagerDto logAlertManagerDto){
         logAlertManager.setLogAlertManager(logAlertManagerDto);
         return logAlertManager;
     }

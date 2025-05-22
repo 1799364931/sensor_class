@@ -43,7 +43,7 @@ public class LogDataController {
     @DeleteMapping("/{logId}")
     public ResponseMessage<LogData> delete(@PathVariable Integer logId){
         var logData = logDataService.delete(logId);
-        return logData == null ? ResponseMessage.fail(logData) : ResponseMessage.success(logData);
+        return logData == null ? ResponseMessage.fail(null) : ResponseMessage.success(logData);
     }
 
 }
