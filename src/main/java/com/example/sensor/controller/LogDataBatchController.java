@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/log_batch")
 public class LogDataBatchController {
-
+//http = localhost:8888/log_batch
     @Autowired
     ILogDataBatchService iLogDataBatchService;
 
