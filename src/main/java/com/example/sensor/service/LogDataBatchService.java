@@ -28,7 +28,25 @@ public class LogDataBatchService implements ILogDataBatchService{
         }
         //如果有过滤器
         else{
-            return logDataRepository.findBylogTimeBetween(logFilter.getStartDate(),logFilter.getEndDate());
+            return switch (logFilter.getIsAlert()) {
+                case ALERT -> logDataRepository.findByLogTimeBetweenAndTemperatureBetweenAndHumidityBetweenAndAlert(
+                        logFilter.getStartDate(), logFilter.getEndDate(),
+                        logFilter.getTemperatureMin(), logFilter.getTemperatureMax(),
+                        logFilter.getHumidityMin(), logFilter.getHumidityMax(),
+                        true
+                );
+                case NOT_ALERT -> logDataRepository.findByLogTimeBetweenAndTemperatureBetweenAndHumidityBetweenAndAlert(
+                        logFilter.getStartDate(), logFilter.getEndDate(),
+                        logFilter.getTemperatureMin(), logFilter.getTemperatureMax(),
+                        logFilter.getHumidityMin(), logFilter.getHumidityMax(),
+                        false
+                );
+                case ALL -> logDataRepository.findByLogTimeBetweenAndTemperatureBetweenAndHumidityBetween(
+                        logFilter.getStartDate(), logFilter.getEndDate(),
+                        logFilter.getTemperatureMin(), logFilter.getTemperatureMax(),
+                        logFilter.getHumidityMin(), logFilter.getHumidityMax()
+                );
+            };
         }
     }
 }

@@ -40,43 +40,159 @@ sensor
 ### 1.3 网页路由
 ```
 localhost:port{
-    /log{ [POST]
-        /log/logId [GET/PUT/DELETE]
-    }
-    /log_alert [POST] 
-    /log_bacth [GET]
-    /log_filter [POST]
+    api/log_alert [POST / GET]
+    api/log_bacth [POST]
+    api/log_batch/statistic [POST]
 }
 
 ```
 
 ## 2 ``@Controller``接口
+此处是后端所实现的接口，前端实现所需要的信息请从对应的``URL``中构造对应的``HTTP``请求，同时包含对应的``json``请求体进行
+后端的信息请求。
 
-### 2.1 ``LogDataController`` 
-实现单个日志的增删查改。
+后端存储的时间戳均为UTC时区，前端需要将其转换为对应的时区(前端可以通过``JS``获取当前时区，然后转换对应的时间戳)。
+
+### ~~2.1 ``LogDataController``~~ 
+~~实现单个日志的增删查改。~~
 
 ### 2.2 ``LogDataBatchController``
 实现批量日志的增删查改，通过前端传入的过滤器进行日期过滤(后续考虑添加温度过滤)。
 
+#### 2.2.1 获取批量的日志信息
+```
+接口名称: 获取批量的日志信息 [日期格式: yyyy-MM-dd'T'HH:mm:ss]
+请求方式: POST
+请求 URL: /log_batch
+请求头:
+  - Content-Type: application/json
+请求体:
+{
+  "startDate": "2025-01-01T00:00:00",
+  "endDate":"2025-06-01T00:00:00",
+  "temperatureMax": 30,
+  "temperatureMin": 20,
+  "humidityMax":58.4,
+  "humidityMin":58.4,
+  "isAlert":2
+}
+
+成功响应数据:
+{
+	"code": 200,
+	"message": "success",
+	"data": [
+		{
+			"logId": 51,
+			"logTime": "2025-05-22T11:42:15.577+00:00",
+			"temperature": 28.9,
+			"humidity": 58.4,
+			"alert": true
+		},
+		{
+			"logId": 52,
+			"logTime": "2025-05-22T11:42:16.578+00:00",
+			"temperature": 28.9,
+			"humidity": 58.4,
+			"alert": true
+		},
+		{
+			"logId": 53,
+			"logTime": "2025-05-22T11:42:17.577+00:00",
+			"temperature": 28.9,
+			"humidity": 58.4,
+			"alert": true
+		}
+	]
+}
+```
+
 ### 2.3 ``LogAlertManagerController``
-实现单例类``LogAlertManager``的控制接口，通过前端的控制返回对应的日志告警范围。
+实现告警管理器的控制，获取当前告警设置以及设置告警范围。
 
-## 3 ``@Service``
+#### 2.3.1 获取当前告警设置
+```
+接口名称: 设置告警范围
+请求方式: GET
+请求 URL: api/log_alert
+请求头:
+  - Content-Type: application/json
+成功响应数据:
+{
+	"code": 200,
+	"message": "success",
+	"data": {
+		"setTime": "2025-05-24T07:00:23.808+00:00",
+		"temperatureMax": 10,
+		"temperatureMin": 0,
+		"humidityMax": 100,
+		"humidityMin": 0
+	}
+}
+```
 
-### 3.1 ``LogDataService``
-实现日志增删查改的服务。
+#### 2.3.2 设置当前告警设置
+```
+接口名称: 设置告警范围
+请求方式: POST
+请求 URL: api/log_alert
+请求头:
+  - Content-Type: application/json
+请求体:
+{
+    "temperatureMax": 50,
+    "temperatureMin": 0,
+    "humidityMax": 60,
+    "humidityMin": 0
+} 
 
-### 3.2 ``LogDataBatchService``
-实现批量查询服务。
+成功响应数据:
+{
+	"code": 200,
+	"message": "success",
+	"data": {
+		"setTime": "2025-05-24T07:12:21.748+00:00",
+		"temperatureMax": 50,
+		"temperatureMin": 0,
+		"humidityMax": 60,
+		"humidityMin": 0
+	}
+}
+```
 
-### 3.3 ``SerialLogService``
-实现从串口中读取信息的服务，并且进行日志信息的过滤，写入数据库。
+#### 2.4 统计日志信息
+```
+接口名称: 统计日志信息 [根据日志ID列表统计]
+请求方式: POST
+请求 URL: api/log_batch/statistic
+请求头:
+  - Content-Type: application/json
+请求体:
+{
+    "ids":[1,2,3,4,5,6,7]
+}
 
+成功响应数据:
+{
+	"code": 200,
+	"message": "success",
+	"data": {
+		"averageTemperature": 28.800000000000004,
+		"averageHumidity": 57.62857142857143,
+		"maxTemperature": 28.8,
+		"minTemperature": 28.8,
+		"maxHumidity": 57.7,
+		"minHumidity": 57.6,
+		"alertCount": 7
+	}
+}
+```
 ## 3 前端实现
 
 ### 3.1 基本显示功能
 
-+ 首先实现最基本的显示，即不带过滤器(前端写死过滤逻辑)的显示，在网页中显示批量的日志。
++ 首先实现最基本的显示，即不带过滤器(前端写死过滤逻辑)的显示，在网页中显示批量的日志。同时，网页并非静态写死的，
+``JS``脚本应该轮询数据库信息，如果新增了对应的日志，要及时刷新网页。
 (此处的逻辑可以写死成一个巨大的范围，比如1970年1月1日到2100年1月1日、温度从-10000 ~ 10000，湿度从0 ~ 100)
 + 其次实现带过滤器的显示，即提供**温度范围**、**湿度范围**的输入栏，以及**是否为告警日志**的勾选栏，
 用户可以选择对应的范围，然后前端获取之后构造一个对应的json发送给后端，得到批量的日志。

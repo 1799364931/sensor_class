@@ -26,6 +26,7 @@ public class LogAlertManager {
 
     public LogAlertManager() {
         setTime = new Timestamp(System.currentTimeMillis());
+        //默认设置
         temperatureMax = 10D;
         temperatureMin = 0D;
         humidityMax = 100D;
@@ -45,7 +46,7 @@ public class LogAlertManager {
         this.temperatureMax = logAlertManagerDto.getTemperatureMax();
         this.humidityMax = logAlertManagerDto.getHumidityMax();
         this.humidityMin = logAlertManagerDto.getHumidityMin();
-        this.setTime = logAlertManagerDto.getSetTime();
+        this.setTime = new Timestamp(System.currentTimeMillis());
     }
 
     public boolean isAlert(LogData logData){

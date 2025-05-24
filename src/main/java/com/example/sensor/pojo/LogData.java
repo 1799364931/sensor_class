@@ -18,15 +18,15 @@ public class LogData {
     @Column(name = "humidity")
     private Double humidity;
     @Column(name = "alert")
-    private boolean isAlert;
+    private boolean alert;
 
     public LogData(){}
 
-    public LogData(Timestamp logTime, Double temperature,Double humidity, boolean isAlert){
+    public LogData(Timestamp logTime, Double temperature,Double humidity, boolean alert){
         this.logTime = logTime;
         this.temperature = temperature;
         this.humidity = humidity;
-        this.isAlert = isAlert;
+        this.alert = alert;
     }
 
     public LogData(LogData logData) {
@@ -34,16 +34,16 @@ public class LogData {
         this.logTime = logData.logTime;
         this.temperature = logData.temperature;
         this.humidity = logData.humidity;
-        this.isAlert = logData.isAlert;
+        this.alert = logData.alert;
     }
 
 
     public boolean isAlert() {
-        return isAlert;
+        return alert;
     }
 
     public void setAlert(boolean alert) {
-        isAlert = alert;
+        this.alert = alert;
     }
 
 

@@ -14,12 +14,12 @@ public class ResponseMessage<T> {
     }
 
     //接口请求成功
-    public static <T> ResponseMessage<T> success(T data){
+    public static <T> ResponseMessage<T> Success(T data){
         return new ResponseMessage<T>(HttpStatus.OK.value(),"success",data);
     }
 
-    public static <T> ResponseMessage<T> fail(T data){
-        return new ResponseMessage<T>(HttpStatus.EXPECTATION_FAILED.value(),"fail",data);
+    public static <T> ResponseMessage<T> NoContent(T data){
+        return new ResponseMessage<T>(HttpStatus.NO_CONTENT.value(),"no content",data);
     }
 
     public Integer getCode() {

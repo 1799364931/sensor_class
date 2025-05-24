@@ -18,7 +18,7 @@ public class LogDataController {
     @PostMapping
     public ResponseMessage<LogData> add(@RequestBody LogDataDto logDataDto){
         var logdata = logDataService.add(logDataDto);
-        return ResponseMessage.success(logdata);
+        return ResponseMessage.Success(logdata);
     }
 
     //query
@@ -27,23 +27,23 @@ public class LogDataController {
         System.out.println("some in:"+logId);
         var logData = logDataService.query(logId);
         if(logData == null){
-            return ResponseMessage.fail(null);
+            return ResponseMessage.NoContent(null);
         }
-        return ResponseMessage.success(logData);
+        return ResponseMessage.Success(logData);
     }
 
     //modify
     @PutMapping("/{logId}")
     public ResponseMessage<LogData> update(@PathVariable Integer logId,@RequestBody LogDataDto logDataDto){
         var logData = logDataService.update(logId,logDataDto);
-        return ResponseMessage.success(logData);
+        return ResponseMessage.Success(logData);
     }
 
     //delete
     @DeleteMapping("/{logId}")
     public ResponseMessage<LogData> delete(@PathVariable Integer logId){
         var logData = logDataService.delete(logId);
-        return logData == null ? ResponseMessage.fail(null) : ResponseMessage.success(logData);
+        return logData == null ? ResponseMessage.NoContent(null) : ResponseMessage.Success(logData);
     }
 
 }
