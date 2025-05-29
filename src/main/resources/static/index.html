@@ -113,15 +113,30 @@
             <li id="nav-alert" onclick="switchView('alertSettings')">告警阈值设置</li>
             <li id="nav-stat" onclick="switchView('statisticSection')">日志统计信息</li>
         </ul>
-        <!-- 日期筛选区域 -->
-        <div id="dateFilter" style="margin-top: 30px;">
-            <h2 style="font-size: 18px; border: none;">按时间筛选</h2>
+        <!-- 日志筛选区域（时间 + 温度 + 湿度） -->
+        <div id="logFilter" style="margin-top: 30px;">
+            <h2 style="font-size: 18px; border: none;">日志筛选</h2>
+
+            <!-- 时间筛选 -->
             <select id="yearSelect" style="width: 100%; margin-bottom: 10px;"></select>
             <select id="monthSelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
             <select id="daySelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
             <select id="hourSelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
-            <button id="filterByTimeBtn" style="width: 100%; background: #3b6378; color: white; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer;" disabled>筛选日志</button>
+
+            <!-- 温度 -->
+            <input type="number" id="tempMinFilter" placeholder="最低温度 (℃)" step="0.5" style="width: 100%; margin-bottom: 8px;" />
+            <input type="number" id="tempMaxFilter" placeholder="最高温度 (℃)" step="0.5" style="width: 100%; margin-bottom: 10px;" />
+
+            <!-- 湿度 -->
+            <input type="number" id="humMinFilter" placeholder="最低湿度 (%)" step="0.5" style="width: 100%; margin-bottom: 8px;" />
+            <input type="number" id="humMaxFilter" placeholder="最高湿度 (%)" step="0.5" style="width: 100%; margin-bottom: 10px;" />
+
+            <!-- 统一筛选按钮 -->
+            <button id="unifiedFilterBtn" style="width: 100%; background: #3b6378; color: white; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer;">
+                应用筛选
+            </button>
         </div>
+
     </div>
 
     <!-- 主内容 -->

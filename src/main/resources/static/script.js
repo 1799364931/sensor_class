@@ -296,16 +296,17 @@ document.getElementById('closeStatisticBtn').addEventListener('click', () => {
     document.querySelector('#statisticTable tbody').innerHTML = '';
 });
 
-// ======================= 时间筛选逻辑 ==========================
+// ======================= 筛选逻辑 ==========================
 window.addEventListener('DOMContentLoaded', () => {
     const yearSel = document.getElementById("yearSelect");
     const monthSel = document.getElementById("monthSelect");
     const daySel = document.getElementById("daySelect");
     const hourSel = document.getElementById("hourSelect");
-    const filterBtn = document.getElementById("filterByTimeBtn");
+    const filterBtn = document.getElementById("unifiedFilterBtn");
 
     if (!yearSel || !monthSel || !daySel || !hourSel || !filterBtn) return;
 
+    yearSel.innerHTML = "<option>选择年份</option>";
     const now = new Date();
     for (let y = 2000; y <= now.getFullYear(); y++) {
         yearSel.appendChild(new Option(`${y}年`, y));
@@ -319,7 +320,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         daySel.disabled = true;
         hourSel.disabled = true;
-        filterBtn.disabled = false;
     });
 
     monthSel.addEventListener("change", () => {
@@ -332,7 +332,6 @@ window.addEventListener('DOMContentLoaded', () => {
             daySel.appendChild(new Option(`${d}日`, d.toString().padStart(2, "0")));
         }
         hourSel.disabled = true;
-        filterBtn.disabled = false;
     });
 
     daySel.addEventListener("change", () => {
@@ -341,12 +340,11 @@ window.addEventListener('DOMContentLoaded', () => {
         for (let h = 0; h < 24; h++) {
             hourSel.appendChild(new Option(`${h}时`, h.toString().padStart(2, "0")));
         }
-        filterBtn.disabled = false;
     });
 
-    hourSel.addEventListener("change", () => {
-        filterBtn.disabled = false;
-    });
+    // hourSel.addEventListener("change", () => {
+    //     filterBtn.disabled = false;
+    // });
 
     filterBtn.addEventListener("click", () => {
         const logContainer = document.getElementById("logContainer");
@@ -359,35 +357,39 @@ window.addEventListener('DOMContentLoaded', () => {
         const month = monthSel.value;
         const day = daySel.value;
         const hour = hourSel.value;
-        let start = undefined;
-        let end = undefined;
-
-        //如果不是数字
-        if(month === "选择月份" || month == null){
+        const tempMin = parseFloat(document.getElementById("tempMinFilter")?.value);
+        const tempMax = parseFloat(document.getElementById("tempMaxFilter")?.value);
+        const humMin = parseFloat(document.getElementById("humMinFilter")?.value);
+        const humMax = parseFloat(document.getElementById("humMaxFilter")?.value);
+        //let start = undefined;
+        //let end = undefined;
+        let start = "1970-01-01T00:00:00";
+        let end = "2100-01-01T00:00:00";
+        if(year === "选择年份" || year == null){
+            start = "1970-01-01T00:00:00";
+            end = "2100-01-01T00:00:00";
+        }
+        else if (month === "选择月份" || month == null) {
             start = `${year}-01-01T00:00:00`;
             end = `${year}-12-31T23:59:59`;
-        }
-        else if(day === "选择日期" || day == null){
+        } else if (day === "选择日期" || day == null) {
             start = `${year}-${month}-01T00:00:00`;
             end = `${year}-${month}-31T23:59:59`;
-        }
-        else if(hour === "选择小时" || hour == null){
+        } else if (hour === "选择小时" || hour == null) {
             start = `${year}-${month}-${day}T00:00:00`;
             end = `${year}-${month}-${day}T23:59:59`;
-        }
-        else{
+        } else {
             start = `${year}-${month}-${day}T${hour}:00:00`;
             end = `${year}-${month}-${day}T${hour}:59:59`;
         }
 
-
         const payload = {
             startDate: start,
             endDate: end,
-            temperatureMin: -10000,
-            temperatureMax: 10000,
-            humidityMin: 0,
-            humidityMax: 100,
+            temperatureMin: isNaN(tempMin) ? -10000 : tempMin,
+            temperatureMax: isNaN(tempMax) ? 10000 : tempMax,
+            humidityMin: isNaN(humMin) ? 0 : humMin,
+            humidityMax: isNaN(humMax) ? 100 : humMax,
             isAlert: 2
         };
 
