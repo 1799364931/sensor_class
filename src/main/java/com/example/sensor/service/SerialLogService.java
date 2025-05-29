@@ -21,7 +21,7 @@ public class SerialLogService {
     LogAlertManager logAlertManager;
 
     public SerialLogService() {
-        serialPort = new SerialPort("COM8"); // Windows串口名（Linux可以用 "/dev/ttyACM0"）
+        serialPort = new SerialPort("COM4"); // Windows串口名（Linux可以用 "/dev/ttyACM0"）
     }
 
     public void startListening() {

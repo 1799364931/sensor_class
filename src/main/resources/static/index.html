@@ -1,48 +1,370 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>点击展开的侧边栏</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <title>温湿度日志实时监测</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="script.js"></script>
+    <style>
+        #appContainer {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #sidebar {
+            width: 220px;
+            background-color: #2f5061;
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #sidebar li {
+            padding: 12px 0;
+            cursor: pointer;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar li:hover {
+            background-color: #3b6378;
+            padding-left: 10px;
+            transition: all 0.2s ease;
+        }
+
+        #mainContent {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 40px;
+            background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
+<div id="appContainer">
     <!-- 侧边栏 -->
-    <aside class="sidebar">
-        <h2>选择日期</h2>
-        <ul class="menu">
-            <li class="menu-item">
-                <span onclick="toggleMenu(this)">2025年 ▼</span>
-                <ul class="submenu">
-                    <li class="menu-item">
-                        <span onclick="toggleMenu(this)">5月 ▼</span>
-                        <ul class="submenu">
-                            <li><span>1日</span></li>
-                            <li><span>2日</span></li>
-                            <li><span>3日</span></li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <span onclick="toggleMenu(this)">6月 ▼</span>
-                        <ul class="submenu">
-                            <li><span>10日</span></li>
-                            <li><span>20日</span></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
+    <div id="sidebar">
+        <h2>功能导航</h2>
+        <ul>
+            <li id="nav-log" onclick="switchView('logContainer')">日志实时监测</li>
+            <li id="nav-alert" onclick="switchView('alertSettings')">告警阈值设置</li>
+            <li id="nav-stat" onclick="switchView('statisticSection')">日志统计信息</li>
         </ul>
-    </aside>
+        <!-- 日期筛选区域 -->
+        <div id="dateFilter" style="margin-top: 30px;">
+            <h2 style="font-size: 18px; border: none;">按时间筛选</h2>
+            <select id="yearSelect" style="width: 100%; margin-bottom: 10px;"></select>
+            <select id="monthSelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
+            <select id="daySelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
+            <select id="hourSelect" style="width: 100%; margin-bottom: 10px;" disabled></select>
+            <button id="filterByTimeBtn" style="width: 100%; background: #3b6378; color: white; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer;" disabled>筛选日志</button>
+        </div>
+    </div>
 
-    <!-- 主内容区 -->
-    <main class="content">
-        <h1>欢迎访问</h1>
-        <p>点击侧边栏中的菜单查看详情。</p>
-    </main>
+    <!-- 主内容 -->
+    <div id="mainContent">
+        <h1 style="text-align: center; color: #2f5061">温湿度日志实时监测</h1>
+        <button id="fetchLogsButton">获取日志数据</button>
+
+        <!-- 告警设置 -->
+        <div id="alertSettings" style="display: none;">
+            <h2>告警阈值设置</h2>
+            <div class="alert-row">
+                <label for="tempMin">温度范围:</label>
+                <input type="number" id="tempMin" placeholder="最低温度" />
+                <input type="number" id="tempMax" placeholder="最高温度" />
+            </div>
+            <div class="alert-row">
+                <label for="humMin">湿度范围:</label>
+                <input type="number" id="humMin" placeholder="最低湿度" />
+                <input type="number" id="humMax" placeholder="最高湿度" />
+            </div>
+            <div class="alert-buttons">
+                <button id="fetchAlertSettingsBtn">获取当前设置</button>
+                <button id="submitAlertSettingsBtn">提交新设置</button>
+            </div>
+            <div id="alertResult" class="alert-result"></div>
+        </div>
+
+        <!-- 当前告警设置 -->
+        <div id="alertContainer" style="display: none;">
+            <h2 style="color: #2f5061; text-align: center; margin-bottom: 20px">
+                当前告警设置
+            </h2>
+            <div style="position: relative">
+          <span
+                  id="closeAlertBtn"
+                  style="
+              display: none;
+              position: absolute;
+              right: -12px;
+              top: -12px;
+              cursor: pointer;
+              color: #888;
+              font-size: 22px;
+              font-weight: bold;
+              background: white;
+              border-radius: 50%;
+              width: 28px;
+              height: 28px;
+              line-height: 24px;
+              text-align: center;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            "
+                  title="关闭告警设置"
+          >&times;</span
+          >
+                <table id="alertTable">
+                    <thead>
+                    <tr>
+                        <th>温度下限 (℃)</th>
+                        <th>温度上限 (℃)</th>
+                        <th>湿度下限 (%)</th>
+                        <th>湿度上限 (%)</th>
+                        <th>设置时间</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 日志统计 -->
+        <div id="statisticSection" style="margin-top: 40px; display: none;">
+            <h2 style="color: #2f5061; text-align: center; margin-bottom: 20px">
+                日志统计信息
+            </h2>
+            <div style="text-align: center; margin-bottom: 20px">
+                <input
+                        type="text"
+                        id="statIdsInput"
+                        placeholder="请输入日志ID，用英文逗号分隔，如1,2,3"
+                        style="
+              padding: 8px 12px;
+              width: 60%;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 14px;
+            "
+                />
+                <button id="fetchStatisticsBtn">获取统计信息</button>
+            </div>
+            <div style="position: relative">
+          <span
+                  id="closeStatisticBtn"
+                  style="
+              display: none;
+              position: absolute;
+              right: -12px;
+              top: -12px;
+              cursor: pointer;
+              color: #888;
+              font-size: 22px;
+              font-weight: bold;
+              background: white;
+              border-radius: 50%;
+              width: 28px;
+              height: 28px;
+              line-height: 24px;
+              text-align: center;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            "
+                  title="关闭统计信息"
+          >&times;</span
+          >
+                <table id="statisticTable" style="display: none;">
+                    <thead>
+                    <tr>
+                        <th>平均温度</th>
+                        <th>平均湿度</th>
+                        <th>最大温度</th>
+                        <th>最小温度</th>
+                        <th>最大湿度</th>
+                        <th>最小湿度</th>
+                        <th>告警次数</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 统计结果展示区（嵌入在实时日志页面中） -->
+        <div id="logStatsInline" style="display: none; margin-top: 30px;">
+            <h3 style="text-align: center; color: #2f5061;">所选日志统计结果</h3>
+            <table style="margin: 0 auto; width: 90%; background-color: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <thead style="background-color: #2f5061; color: white;">
+                <tr>
+                    <th>平均温度</th>
+                    <th>平均湿度</th>
+                    <th>最大温度</th>
+                    <th>最小温度</th>
+                    <th>最大湿度</th>
+                    <th>最小湿度</th>
+                    <th>告警次数</th>
+                </tr>
+                </thead>
+                <tbody id="logStatsBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 日志表格 -->
+        <div id="logContainer" style="display: none;">
+            <h2 style="color: #2f5061; text-align: center; margin-bottom: 20px">
+                实时日志显示
+            </h2>
+            <div style="position: relative">
+          <span
+                  id="closeLogBtn"
+                  style="
+              display: none;
+              position: absolute;
+              right: -12px;
+              top: -12px;
+              cursor: pointer;
+              color: #888;
+              font-size: 22px;
+              font-weight: bold;
+              background: white;
+              border-radius: 50%;
+              width: 28px;
+              height: 28px;
+              line-height: 24px;
+              text-align: center;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            "
+                  title="关闭实时日志"
+          >&times;</span
+          >
+                <table id="logTable">
+                    <thead>
+                    <tr>
+                        <th>日志选择</th>
+                        <th>ID</th>
+                        <th>时间</th>
+                        <th>温度 (℃)</th>
+                        <th>湿度 (%)</th>
+                        <th>是否告警</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style="text-align: center; margin-top: 20px">
+                <button
+                        id="confirmSelectedBtn"
+                        style="
+              padding: 10px 20px;
+              font-size: 16px;
+              color: white;
+              background-color: #2f5061;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+            "
+                >
+                    确认选中日志
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    function switchView(targetId) {
+        const views = ['logContainer', 'alertSettings', 'statisticSection'];
+        const navMap = {
+            logContainer: 'nav-log',
+            alertSettings: 'nav-alert',
+            statisticSection: 'nav-stat'
+        };
 
+        views.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = id === targetId ? 'block' : 'none';
+        });
+
+        // 高亮当前导航项
+        Object.values(navMap).forEach(navId => {
+            const navEl = document.getElementById(navId);
+            if (navEl) navEl.classList.remove('active');
+        });
+        const activeNav = document.getElementById(navMap[targetId]);
+        if (activeNav) activeNav.classList.add('active');
+
+        // 隐藏告警设置容器内容
+        const alertContainer = document.getElementById('alertContainer');
+        if (alertContainer) {
+            alertContainer.style.display = 'none';
+            document.getElementById('closeAlertBtn').style.display = 'none';
+            document.querySelector('#alertTable tbody').innerHTML = '';
+        }
+
+        // 关闭统计信息并清空表格
+        document.getElementById('closeStatisticBtn').style.display = 'none';
+        document.getElementById('statisticTable').style.display = 'none';
+        document.querySelector('#statisticTable tbody').innerHTML = '';
+
+        // 关闭日志表格关闭按钮并清空日志表格内容
+        document.getElementById('closeLogBtn').style.display = 'none';
+        document.querySelector('#logTable tbody').innerHTML = '';
+
+        // 关闭嵌入统计结果区域并清空
+        const inlineStats = document.getElementById('logStatsInline');
+        if (inlineStats) {
+            inlineStats.style.display = 'none';
+            document.getElementById('logStatsBody').innerHTML = '';
+        }
+
+        // 重置时间筛选控件
+        const selects = ['yearSelect', 'monthSelect', 'daySelect', 'hourSelect'];
+        selects.forEach(id => {
+            const sel = document.getElementById(id);
+            if (sel && id !== 'yearSelect') {
+                sel.innerHTML = `<option>请选择</option>`;
+                sel.disabled = true;
+            }
+        });
+        const btn = document.getElementById('filterByTimeBtn');
+        if (btn) btn.disabled = true;
+
+
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        switchView('logContainer');
+
+        const fetchBtn = document.getElementById('fetchAlertSettingsBtn');
+        const alertContainer = document.getElementById('alertContainer');
+        const closeBtn = document.getElementById('closeAlertBtn');
+
+        if (fetchBtn && alertContainer && closeBtn) {
+            fetchBtn.addEventListener('click', () => {
+                alertContainer.style.display = 'block';
+                closeBtn.style.display = 'inline';
+            });
+
+            closeBtn.addEventListener('click', () => {
+                alertContainer.style.display = 'none';
+                closeBtn.style.display = 'none';
+                document.querySelector('#alertTable tbody').innerHTML = '';
+            });
+        }
+    });
+</script>
 </body>
 </html>
