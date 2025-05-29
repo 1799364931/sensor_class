@@ -2,8 +2,10 @@ package com.example.sensor.service;
 
 import com.example.sensor.pojo.LogData;
 import com.example.sensor.pojo.LogFilter;
+import com.example.sensor.pojo.dto.IdListDto;
 import com.example.sensor.pojo.dto.LogFilterDto;
 import com.example.sensor.repository.LogDataRepository;
+import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,18 @@ public class LogDataBatchService implements ILogDataBatchService{
                 );
             };
         }
+    }
+
+    @Override
+    public ArrayList<LogData> deleteBatchLog(IdListDto idListDto){
+        ArrayList<LogData> logDataArrayList = new ArrayList<>();
+        for(var logId:idListDto.getIds()){
+            var logData = logDataRepository.findById(logId);
+            if(logData.isPresent()){
+                logDataArrayList.add(new LogData(logData.get()));
+                logDataRepository.deleteById(logId);
+            }
+        }
+        return logDataArrayList;
     }
 }

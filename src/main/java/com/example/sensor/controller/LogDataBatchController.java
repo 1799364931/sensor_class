@@ -1,6 +1,7 @@
 package com.example.sensor.controller;
 
 import com.example.sensor.pojo.*;
+import com.example.sensor.pojo.dto.IdListDto;
 import com.example.sensor.pojo.dto.LogFilterDto;
 import com.example.sensor.pojo.dto.StaticIdListDto;
 import com.example.sensor.service.ILogDataBatchService;
@@ -34,12 +35,23 @@ public class LogDataBatchController {
 
     //统计日志信息
     @PostMapping("statistic")
-    public ResponseMessage<LogDataStaticData> statisticLogData(@RequestBody StaticIdListDto staticIdListDto){
-        LogDataStaticData logDataStaticData = logDataStatisticService.statisticLogData(staticIdListDto);
+    public ResponseMessage<LogDataStaticData> statisticLogData(@RequestBody IdListDto idListDto){
+        LogDataStaticData logDataStaticData = logDataStatisticService.statisticLogData(idListDto);
         if (logDataStaticData == null) {
             return ResponseMessage.NoContent(null);
         } else {
             return ResponseMessage.Success(logDataStaticData);
+        }
+    }
+
+    //删除日志
+    @DeleteMapping
+    public ResponseMessage<ArrayList<LogData>> deleteBatchLogData(@RequestBody IdListDto idListDto){
+        ArrayList<LogData> logDataArrayList = iLogDataBatchService.deleteBatchLog(idListDto);
+        if(logDataArrayList.isEmpty()){
+            return ResponseMessage.NoContent(null);
+        } else {
+            return ResponseMessage.Success(logDataArrayList);
         }
     }
 
