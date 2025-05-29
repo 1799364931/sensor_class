@@ -54,6 +54,26 @@ function renderTable(logs) {
     });
 }
 
+// 初始化全选状态
+let isAllSelected = false;
+
+// 添加全选/取消全选按钮点击事件
+document.getElementById('selectAllBtn').addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('.log-checkbox'); // 获取所有复选框
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = !isAllSelected; // 根据当前状态切换选中状态
+    });
+
+    // 切换状态
+    isAllSelected = !isAllSelected;
+    if(isAllSelected){
+        document.getElementById('selectAllBtn').style.color = 'lightblue'; // 全选时按钮变色
+    }
+    else{
+        document.getElementById('selectAllBtn').style.color = ''; // 取消全选时恢复默认颜色
+    }
+});
+
 // 绑定按钮点击事件
 document.getElementById('fetchLogsButton').addEventListener('click', () => {
     // ✅ 数据加载成功后再显示容器和关闭按钮
