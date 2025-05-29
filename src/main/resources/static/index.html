@@ -9,7 +9,7 @@
         #appContainer {
             display: flex;
             height: 100vh;
-            overflow: hidden;
+            overflow: auto;
         }
 
         #sidebar {
@@ -51,6 +51,40 @@
             padding: 40px;
             background: linear-gradient(to right, #f0f4f8, #d9e2ec);
         }
+
+        #backToTopButton{
+            text-decoration: none;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #2f5061;
+            color: white;
+            border: none;
+            width: 30px; /* 设置宽度 */
+            height: 30px; /* 设置高度，与宽度相等 */
+            border-radius: 50%; /* 圆形效果 */
+            cursor: pointer;
+            z-index: 9999;
+            text-align: center; /* 使内容居中 */
+            line-height: 30px; /* 垂直居中 */
+        }
+
+        #backToBottomButton{
+            text-decoration: none;
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            background-color: #2f5061;
+            color: white;
+            border: none;
+            width: 30px; /* 设置宽度 */
+            height: 30px; /* 设置高度，与宽度相等 */
+            border-radius: 50%; /* 圆形效果 */
+            cursor: pointer;
+            z-index: 9999;
+            text-align: center; /* 使内容居中 */
+            line-height: 30px; /* 垂直居中 */
+        }
     </style>
 </head>
 <body>
@@ -76,9 +110,16 @@
 
     <!-- 主内容 -->
     <div id="mainContent">
-        <h1 style="text-align: center; color: #2f5061">温湿度日志实时监测</h1>
+        <h1 style="text-align: center; color: #2f5061" id = "top">温湿度日志实时监测</h1>
         <button id="fetchLogsButton">获取日志数据</button>
-
+        <!-- 悬浮按钮 回到顶部 -->
+        <a href="#top" id="backToTopButton">
+            ↑
+        </a>
+        <!-- 悬浮按钮 到底部-->
+        <a href="#bottom" id="backToBottomButton">
+            ↓
+        </a>
         <!-- 告警设置 -->
         <div id="alertSettings" style="display: none;">
             <h2>告警阈值设置</h2>
@@ -265,19 +306,27 @@
             </div>
             <div style="text-align: center; margin-top: 20px">
                 <button
-                        id="confirmSelectedBtn"
-                        style="
-              padding: 10px 20px;
-              font-size: 16px;
-              color: white;
-              background-color: #2f5061;
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-            "
+                id="confirmSelectedBtn"
+                style="
+                    position: fixed;
+                    bottom: 110px;
+                    right: 10px;
+                    background-color: #2f5061;
+                    color: white;
+                    border: none;
+                    width: 30px; /* 设置宽度 */
+                    height: 30px; /* 设置高度，与宽度相等 */
+                    border-radius: 50%; /* 圆形效果 */
+                    cursor: pointer;
+                    z-index: 9999;
+                    text-align: center; /* 使内容居中 */
+                    line-height: 30px; /* 垂直居中 */
+                "
                 >
-                    确认选中日志
+                    &#10004
                 </button>
+            </div>
+            <div id = "bottom">
             </div>
         </div>
     </div>

@@ -299,7 +299,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         daySel.disabled = true;
         hourSel.disabled = true;
-        filterBtn.disabled = true;
+        filterBtn.disabled = false;
     });
 
     monthSel.addEventListener("change", () => {
@@ -312,7 +312,7 @@ window.addEventListener('DOMContentLoaded', () => {
             daySel.appendChild(new Option(`${d}日`, d.toString().padStart(2, "0")));
         }
         hourSel.disabled = true;
-        filterBtn.disabled = true;
+        filterBtn.disabled = false;
     });
 
     daySel.addEventListener("change", () => {
@@ -321,7 +321,7 @@ window.addEventListener('DOMContentLoaded', () => {
         for (let h = 0; h < 24; h++) {
             hourSel.appendChild(new Option(`${h}时`, h.toString().padStart(2, "0")));
         }
-        filterBtn.disabled = true;
+        filterBtn.disabled = false;
     });
 
     hourSel.addEventListener("change", () => {
@@ -339,9 +339,27 @@ window.addEventListener('DOMContentLoaded', () => {
         const month = monthSel.value;
         const day = daySel.value;
         const hour = hourSel.value;
+        let start = undefined;
+        let end = undefined;
 
-        const start = `${year}-${month}-${day}T${hour}:00:00`;
-        const end = `${year}-${month}-${day}T${hour}:59:59`;
+        //如果不是数字
+        if(month === "选择月份" || month == null){
+            start = `${year}-01-01T00:00:00`;
+            end = `${year}-12-31T23:59:59`;
+        }
+        else if(day === "选择日期" || day == null){
+            start = `${year}-${month}-01T00:00:00`;
+            end = `${year}-${month}-31T23:59:59`;
+        }
+        else if(hour === "选择小时" || hour == null){
+            start = `${year}-${month}-${day}T00:00:00`;
+            end = `${year}-${month}-${day}T23:59:59`;
+        }
+        else{
+            start = `${year}-${month}-${day}T${hour}:00:00`;
+            end = `${year}-${month}-${day}T${hour}:59:59`;
+        }
+
 
         const payload = {
             startDate: start,
