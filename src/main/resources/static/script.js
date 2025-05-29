@@ -414,3 +414,36 @@ window.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+
+document.getElementById('exportBtn').addEventListener('click', function () {
+
+
+    let table = document.getElementById('logTable');
+    let rowCount = table.rows.length; // 获取表格的行数
+
+    let data = XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(table), { header: 1 });
+
+    data = data.map(row => row.slice(1));
+
+    let worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    for (let row = 2; row <= rowCount; row++) {
+        let cellRef = `B${row}`;
+        if (worksheet[cellRef]) {
+            worksheet[cellRef].z = "yyyy-mm-dd hh:mm:ss"; // 设置时间格式
+        }
+    }
+
+    for (let row = 2; row <= rowCount; row++) {
+        let cellRef = `E${row}`;
+        if (worksheet[cellRef] && worksheet[cellRef].v.includes("是")) {
+            worksheet[`E${row}`].v = "是";
+        }
+    }
+
+    let workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    XLSX.writeFile(workbook, "log-data.xlsx",{ cellStyles: true });
+
+});
