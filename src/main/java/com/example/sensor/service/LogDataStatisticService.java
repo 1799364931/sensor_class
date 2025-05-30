@@ -17,8 +17,12 @@ public class LogDataStatisticService {
     // 这里可以实现统计逻辑，比如计算平均温度、湿度等
     // 需要根据传入的 StaticIdListDto 获取对应的日志数据进行统计
 
+    private final LogDataRepository logDataRepository;
+
     @Autowired
-    LogDataRepository logDataRepository;
+    public LogDataStatisticService(LogDataRepository logDataRepository) {
+        this.logDataRepository = logDataRepository;
+    }
 
     public LogDataStaticData statisticLogData(IdListDto idListDto) {
         LogDataStaticData logDataStaticData = new LogDataStaticData();

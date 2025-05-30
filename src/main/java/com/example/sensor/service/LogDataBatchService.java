@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
-public class LogDataBatchService implements ILogDataBatchService{
+public class LogDataBatchService {
 
+    private final LogDataRepository logDataRepository;
     @Autowired
-    LogDataRepository logDataRepository;
+    public LogDataBatchService(LogDataRepository logDataRepository) {
+        this.logDataRepository = logDataRepository;
+    }
 
-    @Override
     public ArrayList<LogData> fetchBatchLog(LogFilterDto logFilterDto){
         var logFilter = logFilterDto ==null? null : new LogFilter(logFilterDto);
         //如果没有过滤器 批量发送所有数据
@@ -52,7 +54,6 @@ public class LogDataBatchService implements ILogDataBatchService{
         }
     }
 
-    @Override
     public ArrayList<LogData> deleteBatchLog(IdListDto idListDto){
         ArrayList<LogData> logDataArrayList = new ArrayList<>();
         for(var logId:idListDto.getIds()){

@@ -9,16 +9,17 @@
 - 从开发板中读取数据到数据库中 ✅
 - 批量获取日志(带过滤器的获取) ✅
 - 修改阈值(修改告警阈值) ✅
-- 实现服务器异常处理(参数验证) 📌
+- 实现服务器异常处理(参数验证) ✅
 - 批量删除废旧日志(带过滤器的删除) 📌
 - 下载日志(带过滤器) 📌
-- 实现前端 📌
+- 实现前端 ✅
 ![img.png](img.png)
 
 ### 1.2 可能可以实现的功能
 - 带地图定位(前端实现一个地图的定位 可以定位不同传感器的位置) 📌
 - 反向控制传感器 📌
 - 传感器通过网络传输数据(不仅仅是串口) 📌
+- 用户登陆注册，鉴权 📌
 
 ### 1.2 项目目录
 ```
@@ -28,23 +29,19 @@ sensor
 │   ├── main #主要源代码
 |   |   ├── java
 |   |   |    └── com.example.sensor
-|   |   |   
+|   |   |      
 |   |   └── resources #一些资源配置文件   
 |   |
 │   └── test #测试文件
 |
 ├── target 
 └── README.md
+
 ```
 
 ### 1.3 网页路由
 ```
-localhost:port{
-    api/log_alert [POST / GET]
-    api/log_bacth [POST]
-    api/log_batch/statistic [POST]
-}
-
+localhost:port
 ```
 
 ## 2 ``@Controller``接口
@@ -53,11 +50,13 @@ localhost:port{
 
 后端存储的时间戳均为UTC时区，前端需要将其转换为对应的时区(前端可以通过``JS``获取当前时区，然后转换对应的时间戳)。
 
+可以通过运行项目后，进入[接口文档](http://localhost:5000/swagger-ui/index.html)查看更多接口信息。
+
 ### ~~2.1 ``LogDataController``~~ 
 ~~实现单个日志的增删查改。~~
 
 ### 2.2 ``LogDataBatchController``
-实现批量日志的增删查改，通过前端传入的过滤器进行日期过滤(后续考虑添加温度过滤)。
+实现批量日志的获取、统计、删除等功能。
 
 #### 2.2.1 获取批量的日志信息
 ```
@@ -187,6 +186,27 @@ localhost:port{
 	}
 }
 ```
+#### 2.5 删除日志信息
+```
+
+接口名称: 删除日志信息 [根据日志ID列表删除]
+请求方式: POST
+请求 URL: api/log_batch/delete
+请求头:
+  - Content-Type: application/json
+请求体:
+{
+    "ids":[1,2,3,4,5,6,7]
+}
+成功响应数据:
+{
+    "code": 200,
+    "message": "success",
+    "data": null
+}
+```
+
+
 ## 3 前端实现
 
 ### 3.1 基本显示功能

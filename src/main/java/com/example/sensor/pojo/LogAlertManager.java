@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 public class LogAlertManager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     @Column(name = "set_time")
     private Timestamp setTime;
     @Column(name = "temperature_max")
@@ -31,6 +33,14 @@ public class LogAlertManager {
         temperatureMin = 0D;
         humidityMax = 100D;
         humidityMin = 0D;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     private boolean isTemperatureInRange(Double temperature){

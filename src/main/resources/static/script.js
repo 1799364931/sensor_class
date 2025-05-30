@@ -50,9 +50,11 @@ function renderTable(logs) {
       <td>${log.humidity}</td>
       <td>${log.alert ? "⚠️ 是" : "否"}</td>
     `;
+
         tbody.appendChild(tr);// 插入表格主体
     });
 }
+
 
 // 初始化全选状态
 let isAllSelected = false;
