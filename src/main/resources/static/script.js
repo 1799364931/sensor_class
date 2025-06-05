@@ -41,10 +41,11 @@ function renderTable(logs) {
     // 动态生成表格行
     logs.forEach(log => {
         const tr = document.createElement("tr");
+        let logId = log.logId.toString().padStart(6, '0'); // 将日志ID格式化为6位字符串（前补0）
         // 使用模板字符串构建表格内容
         tr.innerHTML = `
       <td><input type="checkbox" class="log-checkbox" data-id="${log.logId}"></td>
-      <td>${log.logId}</td>
+      <td>${logId}</td>
       <td>${new Date(log.logTime).toLocaleString()}</td>
       <td>${log.temperature}</td>
       <td>${log.humidity}</td>

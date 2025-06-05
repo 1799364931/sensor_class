@@ -5,23 +5,41 @@ import com.example.sensor.pojo.LogData;
 import com.example.sensor.repository.LogDataRepository;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.hibernate.IdentifierLoadAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Properties;
 
 @Service
 public class SerialLogService {
     private final SerialPort serialPort;
+    private final LogDataRepository logDataRepository;
+    private final LogAlertManager logAlertManager;
 
     @Autowired
-    LogDataRepository logDataRepository;
+    public SerialLogService(LogDataRepository logDataRepository,LogAlertManager logAlertManager) {
+        this.logDataRepository = logDataRepository;
+        this.logAlertManager = logAlertManager;
 
-    @Autowired
-    LogAlertManager logAlertManager;
-
-    public SerialLogService() {
-        serialPort = new SerialPort("COM4"); // Windows串口名（Linux可以用 "/dev/ttyACM0"）
+        SerialPort serialPortTemp;
+        Properties properties = new Properties();
+        try {
+            // 读取配置文件
+            properties.load(new FileInputStream("config.properties"));
+            String portName = properties.getProperty("serial.port");
+            // 初始化串口
+            serialPortTemp = new SerialPort(portName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("无法加载配置文件，使用默认端口...");
+            // 如果配置文件加载失败，使用默认端口
+            serialPortTemp = new SerialPort("COM1"); // 替换为你的默认串口
+        }
+        serialPort = serialPortTemp;
     }
 
     public void startListening() {
