@@ -29,7 +29,7 @@ public class SerialLogService {
         Properties properties = new Properties();
         try {
             // 读取配置文件
-            properties.load(new FileInputStream("config.properties"));
+            properties.load(new FileInputStream("src/main/resources/application.properties"));
             String portName = properties.getProperty("serial.port");
             // 初始化串口
             serialPortTemp = new SerialPort(portName);
