@@ -106,6 +106,130 @@ document.getElementById('closeLogBtn').addEventListener('click', () => {
     }
 });
 
+// 绘制温湿度折线图函数
+function plotTemperatureHumidityChart(selectedLogs) {
+    // 按时间排序
+    selectedLogs.sort((a, b) => new Date(a.logTime) - new Date(b.logTime));
+
+    // 准备图表数据
+    const labels = selectedLogs.map(log =>
+        new Date(log.logTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
+
+    const temperatureData = selectedLogs.map(log => log.temperature);
+    const humidityData = selectedLogs.map(log => log.humidity);
+
+    // 销毁现有图表
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+
+    // 显示图表容器
+    const chartContainer = document.getElementById("chartContainer");
+    chartContainer.style.display = 'block';
+    document.getElementById("closeChartBtn").style.display = 'block';
+
+    // 创建Canvas元素
+    const canvas = document.getElementById("tempHumidityChart");
+    canvas.width = chartContainer.clientWidth - 20;
+    canvas.height = chartContainer.clientHeight - 20;
+
+    // 绘制图表
+    const ctx = canvas.getContext('2d');
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: '温度 (°C)',
+                    data: temperatureData,
+                    borderColor: 'rgb(255, 99, 132)', // 红色
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderWidth: 3, // 加粗温度线
+                    pointRadius: 4,
+                    yAxisID: 'y',
+                    tension: 0.2
+                },
+                {
+                    label: '湿度 (%)',
+                    data: humidityData,
+                    borderColor: 'rgb(54, 162, 235)', // 蓝色
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    yAxisID: 'y1',
+                    tension: 0.2,
+                    borderDash: [5, 3] // 添加虚线样式区分
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: '温度 (°C)'
+                    },
+                    min: Math.min(...temperatureData) - 1,
+                    max: Math.max(...temperatureData) + 1
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: '湿度 (%)'
+                    },
+                    min: Math.min(...humidityData) - 1,
+                    max: Math.max(...humidityData) + 5,
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: '温湿度变化趋势图',
+                    font: {
+                        size: 14
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y.toFixed(1);
+                            }
+                            return label;
+                        },
+                        afterLabel: function(context) {
+                            const log = selectedLogs[context.dataIndex];
+                            return `时间: ${new Date(log.logTime).toLocaleString()}\n告警: ${log.alert ? '是' : '否'}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
 
 document.getElementById('confirmSelectedBtn').addEventListener('click', () => {
     const checkboxes = document.querySelectorAll('.log-checkbox:checked');
@@ -157,7 +281,18 @@ document.getElementById('confirmSelectedBtn').addEventListener('click', () => {
                     </tr>
                 `;
                 document.getElementById("logStatsInline").style.display = "block";
-                document.getElementById("logStatsInline").scrollIntoView({ behavior: "smooth" });
+                //add
+                // 获取选中的日志数据
+                const selectedLogs = data.filter(log => selectedIds.includes(log.logId));
+
+                // 绘制折线图
+                plotTemperatureHumidityChart(selectedLogs);
+
+                // 滚动到图表位置
+                document.getElementById("chartContainer").scrollIntoView({ behavior: "smooth" });
+
+
+                //document.getElementById("logStatsInline").scrollIntoView({ behavior: "smooth" });
             } else {
                 alert("统计失败: " + res.message);
             }

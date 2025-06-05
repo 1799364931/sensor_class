@@ -101,6 +101,41 @@
             text-align: center; /* 使内容居中 */
             line-height: 30px; /* 垂直居中 */
         }
+
+        /* 新增的图表容器样式 */
+
+        #chartContainer {
+            display: none;
+            width: 90%;
+            height: 400px;
+            margin: 20px auto; /* 增加上下的外边距 */
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 10px;
+        }
+
+        /* 关闭图表按钮 */
+        #closeChartBtn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 18px;
+            line-height: 30px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
     </style>
 </head>
 <body>
@@ -297,6 +332,13 @@
             </table>
         </div>
 
+        <!-- 图表容器 - 放在统计结果下方 -->
+        <div id="chartContainer">
+            <button id="closeChartBtn">×</button>
+            <canvas id="tempHumidityChart"></canvas>
+        </div>
+
+
         <!-- 日志表格 -->
         <div id="logContainer" style="display: none;">
             <h2 style="color: #2f5061; text-align: center; margin-bottom: 20px">
@@ -434,6 +476,14 @@
             document.getElementById('logStatsBody').innerHTML = '';
         }
 
+        // 关闭图表
+        document.getElementById('chartContainer').style.display = 'none';
+        document.getElementById('closeChartBtn').style.display = 'none';
+        if (window.myChart) {
+            window.myChart.destroy();
+            window.myChart = null;
+        }
+
         // 重置时间筛选控件
         const selects = ['yearSelect', 'monthSelect', 'daySelect', 'hourSelect'];
         selects.forEach(id => {
@@ -470,9 +520,24 @@
             });
         }
     });
+
+    // 绑定关闭图表事件
+    document.getElementById('closeChartBtn').addEventListener('click', () => {
+        document.getElementById('chartContainer').style.display = 'none';
+        document.getElementById('closeChartBtn').style.display = 'none';
+
+        if (window.myChart) {
+            window.myChart.destroy();
+            window.myChart = null;
+        }
+    });
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<!-- 引入Chart.js库 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 </body>
 </html>
