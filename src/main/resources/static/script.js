@@ -283,13 +283,28 @@ document.getElementById('confirmSelectedBtn').addEventListener('click', () => {
                 document.getElementById("logStatsInline").style.display = "block";
                 //add
                 // 获取选中的日志数据
-                const selectedLogs = data.filter(log => selectedIds.includes(log.logId));
+                //const selectedLogs = data.filter(log => selectedIds.includes(log.logId));
 
-                // 绘制折线图
-                plotTemperatureHumidityChart(selectedLogs);
+                fetch(`${apiBase}/api/log_batch/by-id`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }).then(res => res.json())
+                    .then(data => {
+                        if (data.code !== 200) {
+                            alert("获取选中日志失败: " + data.message);
+                        }
+                        else{
+                            plotTemperatureHumidityChart(data.data);
+                            // 滚动到图表位置
+                            document.getElementById("chartContainer").scrollIntoView({ behavior: "smooth" });
+                        }
+                    })
 
-                // 滚动到图表位置
-                document.getElementById("chartContainer").scrollIntoView({ behavior: "smooth" });
+                // // 绘制折线图
+                // plotTemperatureHumidityChart(selectedLogs);
+
+
 
 
                 //document.getElementById("logStatsInline").scrollIntoView({ behavior: "smooth" });
