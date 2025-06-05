@@ -65,4 +65,13 @@ public class LogDataBatchService {
         }
         return logDataArrayList;
     }
+
+    public ArrayList<LogData> fetchBatchLogById(IdListDto idListDto) {
+        ArrayList<LogData> logDataArrayList = new ArrayList<>();
+        for (var logId : idListDto.getIds()) {
+            var logData = logDataRepository.findById(logId);
+            logData.ifPresent(logDataArrayList::add);
+        }
+        return logDataArrayList;
+    }
 }

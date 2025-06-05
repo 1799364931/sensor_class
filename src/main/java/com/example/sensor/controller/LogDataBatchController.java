@@ -40,6 +40,15 @@ public class LogDataBatchController {
         }
     }
 
+    @PostMapping("by-id")
+    @Operation(summary = "按照ID列表获取日志数据", description = "根据提供的ID列表获取日志数据，需提供IdListDto对象")
+    public ResponseMessage<ArrayList<LogData>> getBatchLogDataById(@RequestBody IdListDto idListDto){
+        ArrayList<LogData> logDataArrayList = logDataBatchService.fetchBatchLogById(idListDto);
+        return logDataArrayList.isEmpty() ?
+            ResponseMessage.NoContent(null) :
+            ResponseMessage.Success(logDataArrayList);
+    }
+
     //统计日志信息
     @PostMapping("statistic")
     @Operation(summary = "统计日志数据", description = "根据提供的ID列表统计日志数据，需提供IdListDto对象")
