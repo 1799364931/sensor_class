@@ -36,7 +36,7 @@
     - 数据持久层：``LogDataRepository``、``LogAlertManagerRepository``
 
 - 数据库：``MySQL 8.0``作为数据存储
-    
+  
     - 创建数据库表：``log_data``用于存储温湿度数据。
 
 - 异常处理：``GlobalExceptionHandler``进行全局异常捕获和处理，返回统一格式的错误响应
