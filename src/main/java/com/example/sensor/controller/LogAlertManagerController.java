@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "日志告警管理", description = "日志告警相关接口")
 public class LogAlertManagerController {
     private final LogAlertManager logAlertManager;
-
     @Autowired
     public LogAlertManagerController(LogAlertManager logAlertManager) {
         this.logAlertManager = logAlertManager;
     }
 
     //获取当前的告警设置
-
     @GetMapping
     @Operation(summary = "获取当前日志告警设置", description = "用于获取当前的日志告警系统设置，无需鉴权")
     public ResponseMessage<LogAlertManager> getLogAlertManager(){
@@ -35,8 +33,4 @@ public class LogAlertManagerController {
         logAlertManager.setLogAlertManager(logAlertManagerDto);
         return ResponseMessage.Success(logAlertManager);
     }
-
-
-
-
 }

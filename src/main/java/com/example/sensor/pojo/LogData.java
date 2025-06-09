@@ -4,7 +4,11 @@ package com.example.sensor.pojo;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
-@Table(name = "tb_log")
+@Table(name = "tb_log" ,indexes = {
+        @Index(name = "idx_log_time", columnList = "log_time"),
+        @Index(name = "idx_temperature", columnList = "temperature"),
+        @Index(name = "idx_humidity", columnList = "humidity"),
+})
 @Entity
 public class LogData {
     @Id

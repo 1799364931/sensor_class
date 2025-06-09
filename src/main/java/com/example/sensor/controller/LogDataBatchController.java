@@ -17,9 +17,7 @@ import java.util.ArrayList;
 @Tag(name = "日志批量处理", description = "日志批量处理相关接口")
 public class LogDataBatchController {
     private final LogDataBatchService logDataBatchService;
-
     private final LogDataStatisticService logDataStatisticService;
-
 
     @Autowired
     public LogDataBatchController(LogDataBatchService logDataBatchService, LogDataStatisticService logDataStatisticService) {

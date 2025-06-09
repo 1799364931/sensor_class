@@ -7,8 +7,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SerialLogRunner implements CommandLineRunner {
+
+    private final SerialLogService serialLogService;
+
     @Autowired
-    private SerialLogService serialLogService;
+    public SerialLogRunner(SerialLogService serialLogService) {
+        this.serialLogService = serialLogService;
+    }
 
     @Override
     public void run(String... args) {
